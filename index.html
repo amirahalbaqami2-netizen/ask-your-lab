@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>مساعد الفحص الذكي — قبل الزواج</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1F3864; --navy-2:#16294a;
+    --teal:#0E5C5C; --teal-2:#0a4747;
+    --gold:#B08A2E;
+    --paper:#FBF9F4;
+    --card:#ffffff;
+    --ink:#20242b;
+    --ink-soft:#5b6270;
+    --line:#e7e2d6;
+    --bot-bg:#eef3f2;
+    --user-bg:#1F3864;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#12151b; --card:#191d25; --ink:#eceef2; --ink-soft:#9aa2b1;
+      --line:#2a2f3a; --bot-bg:#1e2530; --user-bg:#2a4a86;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#12151b; --card:#191d25; --ink:#eceef2; --ink-soft:#9aa2b1;
+    --line:#2a2f3a; --bot-bg:#1e2530; --user-bg:#2a4a86;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;background:var(--paper);}
+  body{
+    font-family:'Tajawal', system-ui, -apple-system, Arial, sans-serif;
+    color:var(--ink);
+    display:flex; flex-direction:column;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  .app{ max-width:560px; margin:0 auto; width:100%; display:flex; flex-direction:column; min-height:100vh; }
+
+  header.top{
+    background:linear-gradient(135deg, var(--navy) 0%, var(--teal-2) 100%);
+    color:#fff; padding:18px 18px 22px;
+    position:sticky; top:0; z-index:5;
+    box-shadow:0 6px 18px rgba(0,0,0,.12);
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-badge{
+    width:44px; height:44px; border-radius:12px;
+    background:rgba(255,255,255,.14);
+    display:flex; align-items:center; justify-content:center;
+    flex:0 0 auto;
+  }
+  .brand-badge svg{ width:24px; height:24px; }
+  .brand-text h1{ margin:0; font-family:'Cairo',sans-serif; font-weight:800; font-size:19px; letter-spacing:.2px; }
+  .brand-text p{ margin:2px 0 0; font-size:12.5px; color:rgba(255,255,255,.78); }
+  .top-meta{
+    margin-top:12px; font-size:11.5px; color:rgba(255,255,255,.7);
+    display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+  }
+  .dot{ width:6px; height:6px; border-radius:50%; background:#7CE0B0; display:inline-block; }
+
+  main.chat{
+    flex:1; padding:16px 14px 8px; display:flex; flex-direction:column; gap:10px;
+    overflow-y:auto;
+  }
+
+  .bubble-row{ display:flex; gap:8px; align-items:flex-end; max-width:100%; }
+  .bubble-row.bot{ justify-content:flex-start; }
+  .bubble-row.user{ justify-content:flex-end; }
+
+  .avatar{
+    width:26px; height:26px; border-radius:50%; flex:0 0 auto;
+    background:var(--teal); color:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:700;
+  }
+  .bubble{
+    padding:11px 14px; border-radius:16px; font-size:14.5px; line-height:1.9;
+    max-width:82%; box-shadow:0 1px 2px rgba(0,0,0,.05);
+  }
+  .bubble.bot{ background:var(--bot-bg); color:var(--ink); border-bottom-left-radius:5px; }
+  .bubble.user{ background:var(--user-bg); color:#fff; border-bottom-right-radius:5px; }
+  .bubble.disclaimer{
+    background:#FBF3E0; color:#6b4e10; border:1px solid #E6D08F; font-size:12.5px; line-height:1.8;
+  }
+  :root[data-theme="dark"] .bubble.disclaimer,
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .bubble.disclaimer{ background:#2a2312; color:#e6cd8a; border-color:#4a3d1a; } }
+
+  .typing{ display:flex; gap:4px; padding:6px 4px; }
+  .typing span{ width:6px; height:6px; border-radius:50%; background:var(--ink-soft); opacity:.5; animation:blink 1.2s infinite; }
+  .typing span:nth-child(2){ animation-delay:.2s; } .typing span:nth-child(3){ animation-delay:.4s; }
+  @keyframes blink{ 0%,80%,100%{opacity:.3; transform:translateY(0);} 40%{opacity:1; transform:translateY(-2px);} }
+
+  .menu-label{
+    font-size:12px; color:var(--ink-soft); margin:6px 2px 0; font-weight:500;
+  }
+  .chips{ display:flex; flex-direction:column; gap:8px; margin-top:6px; }
+  .chip{
+    text-align:right; background:var(--card); border:1px solid var(--line);
+    color:var(--ink); padding:11px 14px; border-radius:12px; font-size:14px;
+    font-family:'Tajawal',sans-serif; cursor:pointer; transition:transform .12s ease, border-color .12s ease;
+    display:flex; justify-content:space-between; align-items:center; gap:8px;
+  }
+  .chip:hover{ border-color:var(--teal); }
+  .chip:active{ transform:scale(.98); }
+  .chip .num{
+    flex:0 0 auto; width:22px; height:22px; border-radius:50%;
+    background:var(--teal); color:#fff; font-size:11.5px; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .chip .txt{ flex:1; }
+
+  .reset-row{ display:flex; justify-content:center; margin:14px 0 6px; }
+  .reset-btn{
+    background:none; border:1px solid var(--line); color:var(--ink-soft);
+    font-family:'Tajawal',sans-serif; font-size:12.5px; padding:8px 16px; border-radius:20px;
+    cursor:pointer;
+  }
+  .reset-btn:hover{ border-color:var(--gold); color:var(--gold); }
+
+  .rate-card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px; margin:4px 0 2px 34px;
+  }
+  .rate-card p{ margin:0 0 10px; font-size:13.5px; color:var(--ink); }
+  .rate-stars{ display:flex; gap:6px; justify-content:flex-start; }
+  .star-btn{
+    width:38px; height:38px; border-radius:10px; border:1px solid var(--line);
+    background:transparent; font-size:17px; cursor:pointer; color:var(--ink-soft);
+    display:flex; align-items:center; justify-content:center; font-family:'Tajawal',sans-serif;
+    transition:transform .1s ease;
+  }
+  .star-btn:hover{ border-color:var(--gold); color:var(--gold); }
+  .star-btn:active{ transform:scale(.92); }
+  .rate-thanks{ font-size:13px; color:var(--teal); font-weight:700; }
+
+  footer.bottom{
+    padding:10px 16px 16px; text-align:center; font-size:11px; color:var(--ink-soft);
+    border-top:1px solid var(--line); background:var(--paper);
+  }
+  footer.bottom b{ color:var(--ink); }
+
+  ::-webkit-scrollbar{ width:6px; } ::-webkit-scrollbar-thumb{ background:var(--line); border-radius:3px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="top">
+    <div class="brand">
+      <div class="brand-badge">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 2v6.5L4.2 17a2 2 0 0 0 1.7 3h12.2a2 2 0 0 0 1.7-3L15 8.5V2" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M7.5 14.5h9" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M9 2h6" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>مساعد الفحص الذكي</h1>
+        <p>مبادرة «قبل الزواج .. اسأل مختبرك» — قسم علوم المختبرات الإكلينيكية</p>
+      </div>
+    </div>
+    <div class="top-meta"><span class="dot"></span> متاح الآن · إجابات موثقة علميًا</div>
+  </header>
+
+  <main class="chat" id="chat">
+    <div class="bubble-row bot">
+      <div class="avatar">م</div>
+      <div class="bubble bot">مرحبًا بك 👋 أنا مساعد الفحص الذكي، أجيبك عن أكثر الأسئلة شيوعًا حول الفحص الطبي قبل الزواج.</div>
+    </div>
+    <div class="bubble-row bot">
+      <div style="width:26px;flex:0 0 auto;"></div>
+      <div class="bubble disclaimer">أقدّم معلومات عامة توعوية فقط، ولا أقدّم تشخيصًا أو استشارة طبية فردية. لأي استفسار عن نتيجتك الشخصية تواصل مع مركز الفحص الطبي قبل الزواج التابع لوزارة الصحة.</div>
+    </div>
+    <div id="menuArea"></div>
+  </main>
+
+  <footer class="bottom">
+    فريق طالبات <b>قسم علوم المختبرات الإكلينيكية</b> · الكلية الجامعية بتربة · جامعة الطائف
+  </footer>
+</div>
+
+<!--
+  ============================================================
+  تتبّع الزيارات والتفاعلات وقياس الرضا — عبر GoatCounter (مجاني)
+  ============================================================
+  1) سجّلي حسابًا مجانيًا (بريد إلكتروني فقط، بلا بطاقة) على:
+     https://www.goatcounter.com/signup
+  2) بعد التسجيل ستحصلين على "كود موقعك" (مثال: mylab-assistant)
+  3) استبدلي amirah بالسطر التالي بكودك فقط
+     (لا تغيّري أي شيء آخر في السطر)
+  4) لوحة البيانات: https://amirah.goatcounter.com
+     تعرض: عدد الزيارات، أكثر الأسئلة سؤالًا (faq-1 .. faq-8)،
+     وتوزيع تقييمات الرضا (rating-1 .. rating-5)
+  ============================================================
+-->
+<script data-goatcounter="https://amirah.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+
+<script>
+function trackEvent(path){
+  try{
+    if (window.goatcounter && window.goatcounter.count){
+      window.goatcounter.count({ path: path, title: path, event: true });
+    }
+  }catch(e){ /* analytics unavailable — never block the UI */ }
+}
+</script>
+
+<script>
+const FAQ = [
+  { q: "ما هو الفحص الطبي قبل الزواج؟", a: "فحص مخبري إلزامي في المملكة العربية السعودية يُجرى قبل عقد الزواج، هدفه الكشف المبكر عن بعض الأمراض الوراثية الدموية الشائعة مثل فقر الدم المنجلي والثلاسيميا، لتمكين الطرفين من اتخاذ قرار زواج مستنير." },
+  { q: "هل الفحص إلزامي؟", a: "نعم، يُطبَّق البرنامج إلزاميًا منذ عام 2004م عبر شبكة مراكز ومختبرات تابعة لوزارة الصحة في مختلف مناطق المملكة." },
+  { q: "ما الأمراض التي يكشف عنها الفحص الأساسي؟", a: "يركّز الفحص الأساسي على فقر الدم المنجلي (Sickle Cell Disease) والثلاسيميا (Thalassemia)، وهما من أكثر الأمراض الوراثية الدموية انتشارًا في المملكة." },
+  { q: "ما الفرق بين «الحامل للصفة» و«المصاب بالمرض»؟", a: "الحامل للصفة (Carrier) يملك نسخة واحدة من الجين المتغيّر وهو غالبًا سليم صحيًا، بينما المصاب يملك نسختين من الجين المتغيّر وتظهر عليه أعراض المرض. الخطر الوراثي يظهر عندما يكون كلا الطرفين حاملًا لنفس الصفة." },
+  { q: "ماذا تعني نتيجة «غير متوافقين/خطورة عالية»؟", a: "تعني ارتفاع احتمال إنجاب طفل مصاب بالمرض الوراثي إحصائيًا. هي معلومة للاستنارة وليست منعًا نظاميًا للزواج، والقرار في النهاية شخصي وأسري بعد استشارة متخصصة." },
+  { q: "أين يمكن إجراء الفحص؟", a: "في مراكز الفحص الطبي قبل الزواج التابعة لوزارة الصحة، ومنها مركز الفحص بمحافظة الطائف. يُرجى مراجعة منصة صحتي أو أقرب مركز صحي لمعرفة التفاصيل الإجرائية المحدثة." },
+  { q: "هل نتيجتي سرية؟", a: "نعم، تخضع النتائج للسرية الطبية ولا تُعلن إلا للطرفين المعنيين وفق الأنظمة الصحية المتبعة." },
+  { q: "نتيجتي عالية الخطورة، ماذا أفعل؟", a: "يُنصح بمراجعة استشاري وراثي متخصص لفهم الخيارات المتاحة بشكل كامل قبل اتخاذ أي قرار. هذه الأداة توعوية عامة ولا تغني عن الاستشارة الطبية المتخصصة لحالتك الفردية." },
+];
+
+const chat = document.getElementById('chat');
+const menuArea = document.getElementById('menuArea');
+
+function scrollDown(){ requestAnimationFrame(()=>{ chat.scrollTop = chat.scrollHeight; }); }
+
+function renderMenu(){
+  menuArea.innerHTML = '';
+  const label = document.createElement('div');
+  label.className = 'menu-label';
+  label.textContent = 'اختر سؤالًا:';
+  menuArea.appendChild(label);
+
+  const chips = document.createElement('div');
+  chips.className = 'chips';
+  FAQ.forEach((item, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.innerHTML = `<span class="txt">${item.q}</span><span class="num">${i+1}</span>`;
+    chip.addEventListener('click', () => askQuestion(i));
+    chips.appendChild(chip);
+  });
+  menuArea.appendChild(chips);
+  scrollDown();
+}
+
+function addUserBubble(text){
+  const row = document.createElement('div');
+  row.className = 'bubble-row user';
+  row.innerHTML = `<div class="bubble user">${text}</div>`;
+  chat.insertBefore(row, menuArea);
+  scrollDown();
+}
+
+function addTyping(){
+  const row = document.createElement('div');
+  row.className = 'bubble-row bot';
+  row.id = 'typingRow';
+  row.innerHTML = `<div class="avatar">م</div><div class="bubble bot"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  chat.insertBefore(row, menuArea);
+  scrollDown();
+}
+
+function addBotBubble(text){
+  const t = document.getElementById('typingRow');
+  if(t) t.remove();
+  const row = document.createElement('div');
+  row.className = 'bubble-row bot';
+  row.innerHTML = `<div class="avatar">م</div><div class="bubble bot">${text}</div>`;
+  chat.insertBefore(row, menuArea);
+  scrollDown();
+}
+
+let questionsAnswered = 0;
+let hasShownRating = false;
+
+function askQuestion(i){
+  menuArea.innerHTML = '';
+  addUserBubble(FAQ[i].q);
+  addTyping();
+  logInteraction(i);
+  trackEvent('faq-' + (i + 1));
+  setTimeout(() => {
+    addBotBubble(FAQ[i].a);
+    questionsAnswered += 1;
+
+    const resetRow = document.createElement('div');
+    resetRow.className = 'reset-row';
+    resetRow.innerHTML = `<button class="reset-btn">↩ رجوع لقائمة الأسئلة</button>`;
+    resetRow.querySelector('button').addEventListener('click', renderMenu);
+    chat.insertBefore(resetRow, menuArea);
+
+    if (!hasShownRating && questionsAnswered >= 1){
+      hasShownRating = true;
+      setTimeout(showRatingCard, 500);
+    } else {
+      scrollDown();
+    }
+  }, 650);
+}
+
+function showRatingCard(){
+  const row = document.createElement('div');
+  row.className = 'bubble-row bot';
+  const card = document.createElement('div');
+  card.className = 'rate-card';
+  card.style.marginRight = '34px';
+  card.innerHTML = `
+    <p>قبل ما تكمل — كم تقيّم وضوح الإجابة؟ (تقييمك يساعدنا نحسّن المبادرة)</p>
+    <div class="rate-stars">
+      ${[1,2,3,4,5].map(n => `<button class="star-btn" data-n="${n}">${n}</button>`).join('')}
+    </div>
+  `;
+  row.appendChild(card);
+  chat.insertBefore(row, menuArea);
+  scrollDown();
+
+  card.querySelectorAll('.star-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const n = btn.getAttribute('data-n');
+      trackEvent('rating-' + n);
+      card.innerHTML = `<p class="rate-thanks">شكرًا لتقييمك ✔</p>`;
+      scrollDown();
+    });
+  });
+}
+
+function logInteraction(i){
+  try{
+    const key = 'askq_interactions_v1';
+    const raw = localStorage.getItem(key);
+    const data = raw ? JSON.parse(raw) : { total: 0, byQuestion: {} };
+    data.total += 1;
+    data.byQuestion[i] = (data.byQuestion[i] || 0) + 1;
+    localStorage.setItem(key, JSON.stringify(data));
+  }catch(e){ /* storage unavailable — non-critical */ }
+}
+
+renderMenu();
+trackEvent('page-opened');
+</script>
+</body>
+</html>
