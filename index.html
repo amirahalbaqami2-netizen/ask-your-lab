@@ -126,15 +126,17 @@
     padding:14px; margin:4px 0 2px 34px;
   }
   .rate-card p{ margin:0 0 10px; font-size:13.5px; color:var(--ink); }
-  .rate-stars{ display:flex; gap:6px; justify-content:flex-start; }
+  .rate-stars{ display:flex; gap:6px; justify-content:flex-start; align-items:center; }
   .star-btn{
-    width:38px; height:38px; border-radius:10px; border:1px solid var(--line);
-    background:transparent; font-size:17px; cursor:pointer; color:var(--ink-soft);
+    width:42px; height:42px; border-radius:10px; border:1px solid var(--line);
+    background:transparent; font-size:24px; cursor:pointer; color:#d8dbe2;
     display:flex; align-items:center; justify-content:center; font-family:'Tajawal',sans-serif;
-    transition:transform .1s ease;
+    transition:transform .1s ease, color .12s ease, border-color .12s ease; line-height:1;
   }
-  .star-btn:hover{ border-color:var(--gold); color:var(--gold); }
+  .star-btn:hover{ color:#f0c419; border-color:#f0c419; }
+  .star-btn.lit{ color:#f0c419; border-color:#f0c419; }
   .star-btn:active{ transform:scale(.92); }
+  .rate-label{ font-size:12.5px; color:var(--ink-soft); margin-inline-start:6px; min-width:70px; }
   .rate-thanks{ font-size:13px; color:var(--teal); font-weight:700; }
 
   footer.bottom{
@@ -193,8 +195,9 @@
   3) استبدلي amirah بالسطر التالي بكودك فقط
      (لا تغيّري أي شيء آخر في السطر)
   4) لوحة البيانات: https://amirah.goatcounter.com
-     تعرض: عدد الزيارات، أكثر الأسئلة سؤالًا (faq-1 .. faq-8)،
-     وتوزيع تقييمات الرضا (rating-1 .. rating-5)
+     تعرض: عدد الزيارات، أكثر الأسئلة سؤالًا (faq-1 .. faq-9)،
+     وتوزيع تقييمات الرضا (rating-1 .. rating-5) — الآن يُسجَّل تقييم بعد كل سؤال يُجاب عليه،
+     وأيضًا مصنَّف لكل سؤال على حدة (rating-faq1-5 يعني: تقييم 5 لسؤال رقم 1، وهكذا)
   ============================================================
 -->
 <script data-goatcounter="https://amirah.goatcounter.com/count"
@@ -214,12 +217,13 @@ function trackEvent(path){
 const FAQ = [
   { q: "ما هو الفحص الطبي قبل الزواج؟", a: "فحص مخبري إلزامي في المملكة العربية السعودية يُجرى قبل عقد الزواج، هدفه الكشف المبكر عن بعض الأمراض الوراثية الدموية الشائعة مثل فقر الدم المنجلي والثلاسيميا، لتمكين الطرفين من اتخاذ قرار زواج مستنير." },
   { q: "هل الفحص إلزامي؟", a: "نعم، يُطبَّق البرنامج إلزاميًا منذ عام 2004م عبر شبكة مراكز ومختبرات تابعة لوزارة الصحة في مختلف مناطق المملكة." },
-  { q: "ما الأمراض التي يكشف عنها الفحص الأساسي؟", a: "يركّز الفحص الأساسي على فقر الدم المنجلي (Sickle Cell Disease) والثلاسيميا (Thalassemia)، وهما من أكثر الأمراض الوراثية الدموية انتشارًا في المملكة." },
+  { q: "ما الأمراض التي يكشف عنها الفحص الأساسي؟", a: "الفحص يشمل جانبين: (١) أمراض الدم الوراثية — فقر الدم المنجلي (Sickle Cell Disease) والثلاسيميا (Thalassemia)، وهما الأكثر انتشارًا في المملكة. (٢) بعض الأمراض المعدية — التهاب الكبد الفيروسي B وC، وفيروس نقص المناعة المكتسب (HIV). الهدف من الشقّين معًا هو تمكين الطرفين من قرار زواج مستنير وحماية صحة الأبناء مستقبلاً." },
   { q: "ما الفرق بين «الحامل للصفة» و«المصاب بالمرض»؟", a: "الحامل للصفة (Carrier) يملك نسخة واحدة من الجين المتغيّر وهو غالبًا سليم صحيًا، بينما المصاب يملك نسختين من الجين المتغيّر وتظهر عليه أعراض المرض. الخطر الوراثي يظهر عندما يكون كلا الطرفين حاملًا لنفس الصفة." },
-  { q: "ماذا تعني نتيجة «غير متوافقين/خطورة عالية»؟", a: "تعني ارتفاع احتمال إنجاب طفل مصاب بالمرض الوراثي إحصائيًا. هي معلومة للاستنارة وليست منعًا نظاميًا للزواج، والقرار في النهاية شخصي وأسري بعد استشارة متخصصة." },
+  { q: "إذا كان الطرفان حاملَين لنفس الصفة، وش احتمال إصابة الطفل؟", a: "في كل حمل جديد: 25% (طفل واحد من كل 4) احتمال أن يولد مصابًا بالمرض، 50% احتمال أن يولد حاملًا للصفة مثل والديه (سليم صحيًا)، و25% احتمال أن يولد سليمًا تمامًا بلا الجين. المهم: هذا الاحتمال (25%) يتكرر في كل حمل من جديد ومستقل عن نتيجة الحمل السابق — إنجاب طفل سليم في المرة الأولى لا يعني أن الخطر أقل في الحمل التالي." },
+  { q: "ماذا تعني نتيجة «غير متوافقين»؟", a: "تعني أن كلا الطرفين يحمل صفة نفس المرض الوراثي، فيرتفع احتمال إنجاب طفل مصاب به إحصائيًا (وليس مؤكدًا). في هذه الحالة يُستدعى الطرفان لحضور «عيادة المشورة» لشرح النتيجة، وإذا رغبا بإتمام الزواج رغم ذلك، يوقّعان إقرارًا رسميًا يُرفق مع معاملة عقد الزواج. القرار في النهاية شخصي وأسري بعد فهم كامل للخيارات." },
   { q: "أين يمكن إجراء الفحص؟", a: "في مراكز الفحص الطبي قبل الزواج التابعة لوزارة الصحة، ومنها مركز الفحص بمحافظة الطائف. يُرجى مراجعة منصة صحتي أو أقرب مركز صحي لمعرفة التفاصيل الإجرائية المحدثة." },
   { q: "هل نتيجتي سرية؟", a: "نعم، تخضع النتائج للسرية الطبية ولا تُعلن إلا للطرفين المعنيين وفق الأنظمة الصحية المتبعة." },
-  { q: "نتيجتي عالية الخطورة، ماذا أفعل؟", a: "يُنصح بمراجعة استشاري وراثي متخصص لفهم الخيارات المتاحة بشكل كامل قبل اتخاذ أي قرار. هذه الأداة توعوية عامة ولا تغني عن الاستشارة الطبية المتخصصة لحالتك الفردية." },
+  { q: "نتيجتي «غير متوافقين»، ماذا أفعل؟", a: "هذه الأداة توعوية عامة ولا تقدّم استشارة فردية أو تشخيصًا لحالتك — هذا مقصود لحمايتك من معلومة غير دقيقة. الخطوة الصحيحة: احضري موعد «عيادة المشورة» اللي تستدعيكما إليه الجهة الصحية تلقائيًا بعد هذه النتيجة، ليشرح لك الاستشاري النسبة الدقيقة لحالتكما والخيارات المتاحة كاملة قبل توقيع أي إقرار أو اتخاذ القرار." },
 ];
 
 const chat = document.getElementById('chat');
@@ -275,7 +279,6 @@ function addBotBubble(text){
 }
 
 let questionsAnswered = 0;
-let hasShownRating = false;
 
 function askQuestion(i){
   menuArea.innerHTML = '';
@@ -293,36 +296,49 @@ function askQuestion(i){
     resetRow.querySelector('button').addEventListener('click', renderMenu);
     chat.insertBefore(resetRow, menuArea);
 
-    if (!hasShownRating && questionsAnswered >= 1){
-      hasShownRating = true;
-      setTimeout(showRatingCard, 500);
-    } else {
-      scrollDown();
-    }
+    // Rating now shown after EVERY question (not just the first), tagged per-question
+    setTimeout(() => showRatingCard(i), 450);
   }, 650);
 }
 
-function showRatingCard(){
+function showRatingCard(questionIndex){
   const row = document.createElement('div');
   row.className = 'bubble-row bot';
   const card = document.createElement('div');
   card.className = 'rate-card';
   card.style.marginRight = '34px';
+  const labels = { 1: 'ضعيف', 2: 'مقبول', 3: 'جيد', 4: 'جيد جدًا', 5: 'رائع جدًا!' };
   card.innerHTML = `
-    <p>قبل ما تكمل — كم تقيّم وضوح الإجابة؟ (تقييمك يساعدنا نحسّن المبادرة)</p>
+    <p>كم تقيّم وضوح هذي الإجابة تحديدًا؟</p>
+    <p style="margin:-6px 0 10px;font-size:11.5px;color:var(--ink-soft);">تقييمك يساعدنا فعليًا نقيس أثر المبادرة ونحسّن المحتوى — يأخذ ثانية وحدة فقط 🙏</p>
     <div class="rate-stars">
-      ${[1,2,3,4,5].map(n => `<button class="star-btn" data-n="${n}">${n}</button>`).join('')}
+      ${[1,2,3,4,5].map(n => `<button class="star-btn" data-n="${n}">★</button>`).join('')}
+      <span class="rate-label"></span>
     </div>
   `;
   row.appendChild(card);
   chat.insertBefore(row, menuArea);
   scrollDown();
 
-  card.querySelectorAll('.star-btn').forEach(btn => {
+  const btns = [...card.querySelectorAll('.star-btn')];
+  const labelEl = card.querySelector('.rate-label');
+
+  function paint(n){
+    btns.forEach(b => {
+      const bn = parseInt(b.getAttribute('data-n'), 10);
+      b.classList.toggle('lit', bn <= n);
+    });
+  }
+
+  btns.forEach(btn => {
+    const n = parseInt(btn.getAttribute('data-n'), 10);
+    btn.addEventListener('mouseenter', () => { paint(n); labelEl.textContent = labels[n]; });
+    btn.addEventListener('mouseleave', () => { paint(0); labelEl.textContent = ''; });
     btn.addEventListener('click', () => {
-      const n = btn.getAttribute('data-n');
-      trackEvent('rating-' + n);
-      card.innerHTML = `<p class="rate-thanks">شكرًا لتقييمك ✔</p>`;
+      paint(n);
+      trackEvent('rating-' + n);                                  // aggregate, all questions combined
+      trackEvent('rating-faq' + (questionIndex + 1) + '-' + n);    // per-question breakdown
+      card.innerHTML = `<p class="rate-thanks">شكرًا لتقييمك — ${labels[n]} ✔</p>`;
       scrollDown();
     });
   });
